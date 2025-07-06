@@ -1,11 +1,13 @@
+import os
 import torch
 import random
 import matplotlib.pyplot as plt
 
-def visualize_predictions(model, val_dataset, label_encoder, device, num_samples=10):
+def visualize_predictions(model, val_dataset, label_encoder, device, num_samples=10, save_path=None):
     model.eval()
     
     indices = random.sample(range(len(val_dataset)), num_samples)
+    correct = 0
 
     plt.figure(figsize=(15, 8))
 
@@ -19,6 +21,10 @@ def visualize_predictions(model, val_dataset, label_encoder, device, num_samples
         with torch.no_grad():
             outputs = model(img_input)
             _, predicted = torch.max(outputs, 1)
+
+        # 정답 여부 확인
+        if predicted.item() == true_label:
+            correct += 1
 
         # 라벨 변환
         true_class = label_encoder.inverse_transform([true_label])[0]
@@ -34,6 +40,12 @@ def visualize_predictions(model, val_dataset, label_encoder, device, num_samples
         plt.title(f"GT: {true_class}\nPred: {predicted_class}", fontsize=10)
         plt.axis("off")
 
-    plt.suptitle(f"✅ {correct}/{num_samples} Correct", fontsize=14)
+    plt.suptitle(f"{correct}/{num_samples} Correct", fontsize=14)
     plt.tight_layout()
+
+    if save_path:
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        plt.savefig(save_path)
+        print(f"Predictions saved to {save_path}")
+
     plt.show()
