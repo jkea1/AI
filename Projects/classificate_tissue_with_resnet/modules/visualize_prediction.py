@@ -49,3 +49,21 @@ def visualize_predictions(model, val_dataset, label_encoder, device, num_samples
         print(f"Predictions saved to {save_path}")
 
     plt.show()
+
+
+# Confusion Matrix Visualization
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
+
+def plot_confusion_matrix(true_labels, pred_labels, label_encoder, title="Confusion Matrix"):
+    cm = confusion_matrix(true_labels, pred_labels)
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
+                xticklabels=label_encoder.classes_,
+                yticklabels=label_encoder.classes_)
+    plt.xlabel("Predicted Label")
+    plt.ylabel("True Label")
+    plt.title(title)
+    plt.tight_layout()
+    plt.show()
